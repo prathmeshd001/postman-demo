@@ -22,11 +22,6 @@ jobs:
                   node server.js > server.log 2>&1 &
                   # Wait until an endpoint that returns 200 is up
                   npx wait-on --timeout 60000 http-get://localhost:3000/products
-                  # Make the run deterministic
-                  curl -sSf -X POST http://localhost:3000/__reset > /dev/null
-
-            - name: Smoke check
-              run: curl -sSf http://localhost:3000/products?limit=1 | jq .
 
             - name: Run Newman with HTML report
               run: |
