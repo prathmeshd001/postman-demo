@@ -1,0 +1,56 @@
+# --- Node.js ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+node_repl_history
+*.tgz
+
+# --- Logs & temp ---
+logs/
+*.log
+*.tmp
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# --- Coverage ---
+coverage/
+.nyc_output/
+
+# --- Build / cache ---
+dist/
+build/
+.cache/
+.parcel-cache/
+.temp/
+.tmp/
+
+# --- Newman / reports ---
+reports/
+
+# --- Local env & private configs ---
+.env
+.env.*
+!.env.example
+*.local.*
+*.local.json
+*.secret.*
+*.private.*
+demoenv.local.postman_environment.json
+*.local.postman_environment.json
+*.private.postman_environment.json
+
+# --- OS / Editor junk ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+.history/
+
+# --- Misc artifacts ---
+postman-newman-demo.zip

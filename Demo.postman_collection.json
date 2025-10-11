@@ -1,0 +1,623 @@
+{
+	"info": {
+		"_postman_id": "af097903-9156-4dc8-a86a-0a8c382eb0b1",
+		"name": "Demo Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48050049",
+		"_collection_link": "https://psdoiphode2000-8962873.postman.co/workspace/Prathmesh-Doiphode's-Workspace~fce10294-51cd-483d-8244-74e6af2e7475/collection/48050049-af097903-9156-4dc8-a86a-0a8c382eb0b1?action=share&source=collection_link&creator=48050049"
+	},
+	"item": [
+		{
+			"name": "Reset",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check the status code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"// Check the response time\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"\r",
+							"// Check the Content-Type header\r",
+							"pm.test(\"Content-Type is application/json\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"// Check if the response body contains the expected fields\r",
+							"pm.test(\"Response body contains 'ok' and 'total'\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    pm.expect(response).to.have.property('ok');\r",
+							"    pm.expect(response).to.have.property('total');\r",
+							"});\r",
+							"\r",
+							"// Check the type of 'total'\r",
+							"pm.test(\"Total is a number\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"    pm.expect(response.total).to.be.a('number');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/__reset",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"__reset"
+					]
+				},
+				"description": "## Add Product\n\nThis endpoint allows you to add a new product to the inventory.\n\n### Request\n\n- **Method**: POST\n    \n- **URL**: `{{baseUrl}}/products/add`\n    \n- **Content-Type**: application/json\n    \n\n#### Request Body\n\nThe request body must be in JSON format and should include the following parameters:\n\n- **title** (string): The name of the product you want to add.\n    \n- **price** (number): The price of the product you want to add.\n    \n\n**Example Request Body:**\n\n``` json\n{\n  \"title\": \"Demo Headphones\",\n  \"price\": 199\n}\n\n ```\n\n### Response\n\nUpon successful creation of the product, the API will return a response with the following format:\n\n- **Status Code**: 201 Created\n    \n- **Content-Type**: application/json\n    \n\n#### Response Body\n\nThe response will include the following fields:\n\n- **id** (integer): The unique identifier for the newly created product.\n    \n- **title** (string): The title of the product that was added.\n    \n- **price** (number): The price of the product that was added.\n    \n\n**Example Response Body:**\n\n``` json\n{\n  \"id\": 0,\n  \"title\": \"\",\n  \"price\": 0\n}\n\n ```\n\nMake sure to handle the response appropriately in your application."
+			},
+			"response": []
+		},
+		{
+			"name": "List Products",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+							"pm.test(\"JSON content-type\", () => pm.response.to.have.header(\"content-type\", \"application/json; charset=utf-8\"));\r",
+							"\r",
+							"const j = pm.response.json();\r",
+							"pm.test(\"Has at least 1 product\", () => pm.expect(j.products?.length).to.be.above(0));\r",
+							"\r",
+							"// Save the first product id for chaining\r",
+							"pm.environment.set(\"productId\", j.products[0].id);\r",
+							"\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response status code is 200\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"// Updated response time test limit\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validate the schema of the products array\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData).to.have.property('products').that.is.an('array');\r",
+							"\r",
+							"    if (responseData.products.length > 0) {\r",
+							"        pm.expect(responseData.products).to.not.be.empty;\r",
+							"\r",
+							"        responseData.products.forEach(product => {\r",
+							"            pm.expect(product).to.be.an('object');\r",
+							"            pm.expect(product).to.have.all.keys('id', 'title', 'description', 'category', 'price', 'discountPercentage', 'rating', 'stock', 'tags', 'brand', 'sku', 'weight', 'dimensions', 'warrantyInformation', 'shippingInformation', 'availabilityStatus', 'reviews', 'returnPolicy', 'minimumOrderQuantity', 'meta', 'images', 'thumbnail');\r",
+							"\r",
+							"            pm.expect(product.id).to.be.a('number');\r",
+							"            pm.expect(product.title).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.description).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.category).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.price).to.be.a('number').that.is.greaterThan(0);\r",
+							"            pm.expect(product.discountPercentage).to.be.a('number').that.is.within(0, 100); // Fixed discountPercentage test\r",
+							"            pm.expect(product.rating).to.be.a('number').that.is.at.least(0).and.at.most(5);\r",
+							"            pm.expect(product.stock).to.be.a('number').that.is.at.least(0);\r",
+							"            pm.expect(product.tags).to.be.an('array');\r",
+							"            pm.expect(product.brand).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.sku).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.weight).to.be.a('number').that.is.at.least(0);\r",
+							"            pm.expect(product.dimensions).to.be.an('object');\r",
+							"            pm.expect(product.dimensions).to.have.all.keys('width', 'height', 'depth');\r",
+							"            pm.expect(product.dimensions.width).to.be.a('number').that.is.at.least(0);\r",
+							"            pm.expect(product.dimensions.height).to.be.a('number').that.is.at.least(0);\r",
+							"            pm.expect(product.dimensions.depth).to.be.a('number').that.is.at.least(0);\r",
+							"            pm.expect(product.warrantyInformation).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.shippingInformation).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.availabilityStatus).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.reviews).to.be.an('array');\r",
+							"            pm.expect(product.returnPolicy).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.minimumOrderQuantity).to.be.a('number').that.is.at.least(0);\r",
+							"            pm.expect(product.meta).to.be.an('object');\r",
+							"            pm.expect(product.meta).to.have.all.keys('createdAt', 'updatedAt', 'barcode', 'qrCode');\r",
+							"            pm.expect(product.meta.createdAt).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.meta.updatedAt).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.meta.barcode).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.meta.qrCode).to.be.a('string').that.is.not.empty;\r",
+							"            pm.expect(product.images).to.be.an('array');\r",
+							"            pm.expect(product.thumbnail).to.be.a('string').that.is.not.empty;\r",
+							"        });\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Reviews array exists and contains the expected structure for each review\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.be.an('object');\r",
+							"    pm.expect(responseData.products).to.be.an('array');\r",
+							"\r",
+							"    if (responseData.products.length > 0) {\r",
+							"        responseData.products.forEach(product => {\r",
+							"            pm.expect(product.reviews).to.be.an('array');\r",
+							"            \r",
+							"            product.reviews.forEach(review => {\r",
+							"                pm.expect(review).to.be.an('object');\r",
+							"                pm.expect(review).to.have.all.keys('rating', 'comment', 'date', 'reviewerName', 'reviewerEmail');\r",
+							"                pm.expect(review.rating).to.be.a('number').that.is.at.least(0).and.at.most(5);\r",
+							"                pm.expect(review.comment).to.be.a('string').that.is.not.empty;\r",
+							"                pm.expect(review.date).to.be.a('string').that.is.not.empty;\r",
+							"                pm.expect(review.reviewerName).to.be.a('string').that.is.not.empty;\r",
+							"                pm.expect(review.reviewerEmail).to.be.a('string').that.matches(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/, \"Email format is invalid\");\r",
+							"            });\r",
+							"        });\r",
+							"    }\r",
+							"});\r",
+							"var template = `\r",
+							"<style type=\"text/css\">\r",
+							"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+							"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+							"    .tftable tr {background-color:#ffffff;}\r",
+							"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+							"    .tftable tr:hover {background-color:#e0ffff;}\r",
+							"</style>\r",
+							"\r",
+							"<table class=\"tftable\" border=\"1\">\r",
+							"    <tr>\r",
+							"        <th>ID</th>\r",
+							"        <th>Title</th>\r",
+							"        <th>Description</th>\r",
+							"        <th>Category</th>\r",
+							"        <th>Price</th>\r",
+							"        <th>Stock</th>\r",
+							"        <th>Rating</th>\r",
+							"        <th>Brand</th>\r",
+							"    </tr>\r",
+							"    \r",
+							"    {{#each response.products}}\r",
+							"        <tr>\r",
+							"            <td>{{id}}</td>\r",
+							"            <td>{{title}}</td>\r",
+							"            <td>{{description}}</td>\r",
+							"            <td>{{category}}</td>\r",
+							"            <td>{{price}}</td>\r",
+							"            <td>{{stock}}</td>\r",
+							"            <td>{{rating}}</td>\r",
+							"            <td>{{brand}}</td>\r",
+							"        </tr>\r",
+							"    {{/each}}\r",
+							"</table>\r",
+							"`;\r",
+							"\r",
+							"function constructVisualizerPayload() {\r",
+							"    return { response: pm.response.json() };\r",
+							"}\r",
+							"\r",
+							"pm.visualizer.set(template, constructVisualizerPayload());\r",
+							"\r",
+							"pm.test(\"Total number of products returned should match the limit parameter\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    const limit = 5; // The limit parameter from the request\r",
+							"    pm.expect(responseData.limit).to.equal(limit);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each product's price should be a positive number\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.have.property('products').that.is.an('array').with.lengthOf.at.least(1);\r",
+							"    \r",
+							"    responseData.products.forEach(product => {\r",
+							"        pm.expect(product.price).to.be.a('number').and.to.be.above(0, \"Price should be a positive number\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each product's discount percentage should be between 0 and 100\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"\r",
+							"    pm.expect(responseData).to.have.property('products').that.is.an('array').with.lengthOf.at.least(0);\r",
+							"    \r",
+							"    responseData.products.forEach(product => {\r",
+							"        pm.expect(product.discountPercentage).to.be.within(0, 100);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each product's stock should be a non-negative integer\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.have.property('products').that.is.an('array');\r",
+							"    responseData.products.forEach(product => {\r",
+							"        pm.expect(product).to.have.property('stock').that.is.a('number').and.to.be.at.least(0);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tags field is an array with non-empty strings\", function () {\r",
+							"    const responseData = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseData).to.have.property('products').that.is.an('array').and.is.not.empty;\r",
+							"    \r",
+							"    responseData.products.forEach(product => {\r",
+							"        pm.expect(product.tags).to.be.an('array');\r",
+							"        product.tags.forEach(tag => {\r",
+							"            pm.expect(tag).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Tag should not be empty\");\r",
+							"        });\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/products?limit=5",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"products"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						}
+					]
+				},
+				"description": "### Get Products\n\nThis endpoint retrieves a list of products with a specified limit on the number of items returned.\n\n#### Request Parameters\n\n- **limit** (query parameter, required):\n    \n    - Type: integer\n        \n    - Description: Specifies the maximum number of product items to return in the response. In this case, the limit is set to 5.\n        \n\n#### Expected Response\n\nThe response will contain a list of product objects. Each product object typically includes details such as the product ID, name, description, price, and other relevant attributes. The structure of the response may vary based on the available product data.\n\n#### Notes\n\n- Ensure that the `limit` parameter is set to a positive integer to avoid unexpected behavior.\n    \n- If the limit exceeds the total number of available products, the response will return all available products up to the specified limit."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Product By Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();\r",
+							"\r",
+							"pm.test(\"200 + has id\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"  const j = pm.response.json();\r",
+							"  pm.expect(j).to.have.property(\"id\");\r",
+							"  pm.environment.set(\"productTitle\", j.title);\r",
+							"});\r",
+							"\r",
+							"const schema = {\r",
+							"  type: \"object\",\r",
+							"  required: [\"id\",\"title\",\"price\"],\r",
+							"  properties: {\r",
+							"    id: { type: \"integer\" },\r",
+							"    title: { type: \"string\" },\r",
+							"    price: { type: \"number\" }\r",
+							"  },\r",
+							"  additionalProperties: true\r",
+							"};\r",
+							"pm.test(\"Matches schema\", () => pm.response.to.have.jsonSchema(schema));\r",
+							"\r",
+							"\r",
+							"\r",
+							"// Test for the status code\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"// Test for response structure\r",
+							"pm.test(\"Response has the required properties\", function () {\r",
+							"    pm.expect(response).to.have.all.keys(\r",
+							"        'id', 'title', 'description', 'category', 'price', \r",
+							"        'discountPercentage', 'rating', 'stock', 'tags', \r",
+							"        'brand', 'sku', 'weight', 'dimensions', \r",
+							"        'warrantyInformation', 'shippingInformation', \r",
+							"        'availabilityStatus', 'reviews', 'returnPolicy', \r",
+							"        'minimumOrderQuantity', 'meta', 'images', 'thumbnail'\r",
+							"    );\r",
+							"});\r",
+							"\r",
+							"// Test for response content types\r",
+							"pm.test(\"Response content type is application/json\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.equal(\"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"// Test for reviews structure\r",
+							"pm.test(\"Reviews array contains objects with required properties\", function () {\r",
+							"    pm.expect(response.reviews).to.be.an('array');\r",
+							"    response.reviews.forEach(review => {\r",
+							"        pm.expect(review).to.have.all.keys('rating', 'comment', 'date', 'reviewerName', 'reviewerEmail');\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Test for dimensions structure\r",
+							"pm.test(\"Dimensions object has required properties\", function () {\r",
+							"    pm.expect(response.dimensions).to.have.all.keys('width', 'height', 'depth');\r",
+							"});\r",
+							"\r",
+							"// Test for meta object structure\r",
+							"pm.test(\"Meta object has required properties\", function () {\r",
+							"    pm.expect(response.meta).to.have.all.keys('createdAt', 'updatedAt', 'barcode', 'qrCode');\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/products/{{productId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"products",
+						"{{productId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// pm.test(\"Status code is 200\", function () {\r",
+							"//     pm.expect(pm.response.code).to.equal(200);\r",
+							"// });\r",
+							"\r",
+							"const code = pm.response.code;\r",
+							"pm.test(\"Created OK\", () => pm.expect([200,201]).to.include(code));\r",
+							"\r",
+							"// const j = pm.response.json();\r",
+							"// pm.environment.set(\"createdId\", j.id);\r",
+							"// pm.test(\"Has new id\", () => pm.expect(j).to.have.property(\"id\"));\r",
+							"\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains product ID\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.have.property(\"id\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains correct title\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.title).to.equal(\"Demo Headphones\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response contains correct price\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.price).to.equal(199);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \r\n    \"title\": \"Demo Headphones\", \r\n    \"price\": 199 \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/products/add",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"products",
+						"add"
+					]
+				},
+				"description": "## Add Product\n\nThis endpoint allows you to add a new product to the inventory.\n\n### Request\n\n- **Method**: POST\n    \n- **URL**: `{{baseUrl}}/products/add`\n    \n- **Content-Type**: application/json\n    \n\n#### Request Body\n\nThe request body must be in JSON format and should include the following parameters:\n\n- **title** (string): The name of the product you want to add.\n    \n- **price** (number): The price of the product you want to add.\n    \n\n**Example Request Body:**\n\n``` json\n{\n  \"title\": \"Demo Headphones\",\n  \"price\": 199\n}\n\n ```\n\n### Response\n\nUpon successful creation of the product, the API will return a response with the following format:\n\n- **Status Code**: 201 Created\n    \n- **Content-Type**: application/json\n    \n\n#### Response Body\n\nThe response will include the following fields:\n\n- **id** (integer): The unique identifier for the newly created product.\n    \n- **title** (string): The title of the product that was added.\n    \n- **price** (number): The price of the product that was added.\n    \n\n**Example Response Body:**\n\n``` json\n{\n  \"id\": 0,\n  \"title\": \"\",\n  \"price\": 0\n}\n\n ```\n\nMake sure to handle the response appropriately in your application."
+			},
+			"response": []
+		},
+		{
+			"name": "Update Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"const j = pm.response.json();\r",
+							"pm.test(\"200 + price updated\", () => {\r",
+							"  pm.response.to.have.status(200);\r",
+							"  pm.expect(j.price).to.eql(179);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has correct content-type\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+							"});\r",
+							"\r",
+							"// Assuming the response is a JSON object, add a test for expected properties\r",
+							"pm.test(\"Response has expected properties\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson).to.have.property(\"id\");\r",
+							"    pm.expect(responseJson).to.have.property(\"price\");\r",
+							"    pm.expect(responseJson.price).to.equal(179); // Assuming the price is returned in the response\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \r\n    \"price\": 179\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/products/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"products",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response time is less than 1000ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Delete success\", () => pm.response.to.have.status(200));\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/products/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"products",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "{{baseUrl]}",
+			"type": "string"
+		}
+	]
+}

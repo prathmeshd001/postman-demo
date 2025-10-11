@@ -1,0 +1,31 @@
+name: API Tests (Postman + Newman)
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    newman:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+
+            - run: npm ci
+
+            - name: Start API
+              run: |
+                  node server.js &
+                  npx wait-on http://localhost:3000
+
+            - name: Run Newman with HTML report
+              run: npm run test:api
+
+            - name: Upload HTML report
+              uses: actions/upload-artifact@v4
+              with:
+                  name: newman-report
+                  path: reports/

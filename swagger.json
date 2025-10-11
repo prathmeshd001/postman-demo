@@ -1,0 +1,132 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "Postman Demo API", "version": "1.0.0" },
+  "servers": [{ "url": "http://localhost:3000" }],
+  "paths": {
+    "/__reset": {
+      "post": {
+        "summary": "Reset in-memory seed data",
+        "responses": { "200": { "description": "Reset OK" } }
+      }
+    },
+    "/products": {
+      "get": {
+        "summary": "List products",
+        "parameters": [
+          { "in": "query", "name": "limit", "schema": { "type": "integer", "default": 5 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "products": { "type": "array", "items": { "$ref": "#/components/schemas/Product" } },
+                    "total": { "type": "integer" },
+                    "skip": { "type": "integer" },
+                    "limit": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "summary": "Get product by id",
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "OK" }, "404": { "description": "Not Found" } }
+      },
+      "put": {
+        "summary": "Update product",
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Product" } } }
+        },
+        "responses": { "200": { "description": "OK" }, "404": { "description": "Not Found" } }
+      },
+      "delete": {
+        "summary": "Delete product",
+        "parameters": [{ "in": "path", "name": "id", "required": true, "schema": { "type": "integer" } }],
+        "responses": { "200": { "description": "OK" }, "404": { "description": "Not Found" } }
+      }
+    },
+    "/products/add": {
+      "post": {
+        "summary": "Create product",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "title": { "type": "string" }, "price": { "type": "number" } },
+                "required": ["title", "price"]
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Dimensions": {
+        "type": "object",
+        "properties": { "width": { "type": "number" }, "height": { "type": "number" }, "depth": { "type": "number" } }
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "rating": { "type": "number" },
+          "comment": { "type": "string" },
+          "date": { "type": "string" },
+          "reviewerName": { "type": "string" },
+          "reviewerEmail": { "type": "string", "format": "email" }
+        }
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "createdAt": { "type": "string" },
+          "updatedAt": { "type": "string" },
+          "barcode": { "type": "string" },
+          "qrCode": { "type": "string" }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer" },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "category": { "type": "string" },
+          "price": { "type": "number" },
+          "discountPercentage": { "type": "number" },
+          "rating": { "type": "number" },
+          "stock": { "type": "integer" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "brand": { "type": "string" },
+          "sku": { "type": "string" },
+          "weight": { "type": "number" },
+          "dimensions": { "$ref": "#/components/schemas/Dimensions" },
+          "warrantyInformation": { "type": "string" },
+          "shippingInformation": { "type": "string" },
+          "availabilityStatus": { "type": "string" },
+          "reviews": { "type": "array", "items": { "$ref": "#/components/schemas/Review" } },
+          "returnPolicy": { "type": "string" },
+          "minimumOrderQuantity": { "type": "integer" },
+          "meta": { "$ref": "#/components/schemas/Meta" },
+          "images": { "type": "array", "items": { "type": "string" } },
+          "thumbnail": { "type": "string" }
+        }
+      }
+    }
+  }
+}
