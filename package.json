@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "test:api": "npx newman run Demo.postman_collection.json -e demoenv.local.postman_environment.json --env-var baseUrl=http://localhost:3000 -r cli,htmlextra --reporter-htmlextra-export reports/index.html --reporter-htmlextra-title \"API Test Report\"",
+    "test:api": "npx newman run Demo.postman_collection.json -e demoenv.postman_environment.json --env-var baseUrl=http://localhost:3000 -r cli,htmlextra --reporter-htmlextra-export reports/index.html --reporter-htmlextra-title \"API Test Report\"",
     "ci": "node server.js & npx wait-on http://localhost:3000 && curl -s -X POST http://localhost:3000/__reset || true && npm run test:api"
   },
   "dependencies": {
