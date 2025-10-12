@@ -96,7 +96,7 @@ app.post("/__reset", (req, res) => {
 // --- API matching your collection's flow ---
 app.get("/products", (req, res) => {
     const limit = Math.max(0, parseInt(req.query.limit || "5", 10));
-    const list = products.slice(6, limit);
+    const list = products.slice(0, limit);
     sendJson(res, { products: list, total: products.length, skip: 0, limit });
 });
 
