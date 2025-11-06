@@ -1,13 +1,11 @@
 const express = require("express");
 const cors = require("cors");
-const swaggerUi = require("swagger-ui-express");
 const fs = require("fs");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// --- Seed data so id=1 exists for your PUT/DELETE tests ---
 function seedProducts() {
     return [
         {
@@ -93,7 +91,7 @@ app.post("/__reset", (req, res) => {
     sendJson(res, { ok: true, total: products.length });
 });
 
-// --- API matching your collection's flow ---
+// --- API matching collection's flow ---
 app.get("/products", (req, res) => {
     const limit = Math.max(0, parseInt(req.query.limit || "5", 10));
     const list = products.slice(0, limit);
@@ -112,7 +110,7 @@ app.post("/products/add", (req, res) => {
     const now = new Date().toISOString();
     const nextId = (products.reduce((m, p) => Math.max(m, p.id), 0) || 0) + 1;
 
-    // Non-empty defaults to make schema tests pass
+    // Non-empty defaults
     const newProd = {
         id: nextId,
         title: String(title ?? "Untitled product"),
@@ -169,11 +167,7 @@ app.delete("/products/:id", (req, res) => {
     sendJson(res, { ok: true });
 });
 
-// --- Swagger UI ---
-const swaggerDoc = JSON.parse(fs.readFileSync("./swagger.json", "utf8"));
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
-
 const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`API listening on http://localhost:${PORT} (Swagger: /docs)`);
+    console.log(`API listening on http://localhost:${PORT}`);
 });
