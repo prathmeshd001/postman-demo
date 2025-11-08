@@ -1,8 +1,6 @@
-name: API Tests (Postman + Newman)
+name: API Tests
 
-on:
-    push:
-    pull_request:
+on: [push, pull_request]
 
 jobs:
     newman:
@@ -12,31 +10,15 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: "20"
-                  cache: "npm"
+                  node-version: 20
 
             - run: npm ci
 
-            - name: Start API
-              run: |
-                  node server.js > server.log 2>&1 &
-                  # Wait until an endpoint that returns 200 is up
-                  npx wait-on --timeout 60000 http-get://localhost:3000/products
+            # Start server, wait until it's live, reset data, then run tests (HTML report included)
+            - run: npm run ci
 
-            - name: Run Newman with HTML report
-              run: |
-                  mkdir -p reports
-                  npm run test:api
-
-            - name: Upload HTML report
-              if: always()
-              uses: actions/upload-artifact@v4
+            # Upload the HTML report as a build artifact
+            - uses: actions/upload-artifact@v4
               with:
                   name: newman-report
-                  path: reports/
-
-            - name: Print server logs on failure
-              if: failure()
-              run: |
-                  echo "===== server.log ====="
-                  cat server.log
+                  path: reports/index.html
